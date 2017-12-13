@@ -1,23 +1,24 @@
-var React = require('react-native');
-var Util = require('./util');
+import React, {
+    Component
+} from 'react';
+import {
+    View,
+    ScrollView,
+    Text,
+    StyleSheet,
+    TextInput,
+    ActivityIndicator,
+    TouchableOpacity
+} from 'react-native';
 
-var {
-  View,
-  ScrollView,
-  Text,
-  StyleSheet,
-  TextInput,
-  ActivityIndicatorIOS,
-  TouchableOpacity
-  } = React;
-
-var FoodDetail = React.createClass({
-  getInitialState: function(){
-    return{
+export  default class PDetail extends Component{
+    constructor(props){
+        super(props);
+        this.state={
       data: null
     };
-  },
-  render: function(){
+  }
+  render(){
     return (
       <ScrollView>
         {this.state.data?
@@ -43,10 +44,11 @@ var FoodDetail = React.createClass({
         :null}
       </ScrollView>
     );
-  },
-  componentDidMount: function(){
+  }
+  componentDidMount(){
     var that = this;
-    var url = Util.detailURL + 'key=' + Util.amapKey + '&id=' + this.props.id + '&extensions=all';
+    var url = Util.searchURL + 'key=' + Util.amapKey +  '&location=' + /*lnglat*/'31.755726,117.253389' +'&keywords=parking' + '&extensions=base';
+      that._doGetData(url);
     Util.getJSON(url, function(data){
       if(data.status && data.info === 'OK' && data.pois.length){
         var obj = data.pois[0];
@@ -62,7 +64,7 @@ var FoodDetail = React.createClass({
 
     });
   }
-});
+};
 
 var styles = StyleSheet.create({
   container:{
@@ -98,7 +100,4 @@ var styles = StyleSheet.create({
 
 });
 
-
-
-module.exports = FoodDetail;
 

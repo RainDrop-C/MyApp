@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script type="text/javascript" src="socket.io/socket.io.js"></script>
+    <meta charset="UTF-8" http-equiv="refresh" content="100">
+    <meta charset="utf-8">
+    <meta name="viewport" content="height=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+    <title>Parking lot</title>
+    <style type="text/css">
+        .button {
+            display: inline-block;
+            zoom: 1; /* zoom and *display = ie7 hack for display:inline-block */
+            *display: inline;
+            vertical-align: baseline;
+            margin: 0 2px;
+            outline: none;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            font: 14px/100% Arial, Helvetica, sans-serif;
+            padding: .5em 2em .55em;
+            text-shadow: 0 1px 1px rgba(0,0,0,.3);
+            -webkit-border-radius: .5em;
+            -moz-border-radius: .5em;
+            border-radius: .5em;
+            -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.2);
+            -moz-box-shadow: 0 1px 2px rgba(0,0,0,.2);
+            box-shadow: 0 1px 2px rgba(0,0,0,.2);
+        }
+        .button:hover {
+            text-decoration: none;
+        }
+        .button:active {
+            position: relative;
+            top: 1px;
+        }
+        .orange {
+            color: #fef4e9;
+            border: solid 1px #da7c0c;
+            background: #f78d1d;
+            background: -webkit-gradient(linear, left top, left bottom, from(#faa51a), to(#f47a20));
+            background: -moz-linear-gradient(top,  #faa51a,  #f47a20);
+            filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#faa51a', endColorstr='#f47a20');
+        }
+        .orange:hover {
+            background: #f47c20;
+            background: -webkit-gradient(linear, left top, left bottom, from(#f88e11), to(#f06015));
+            background: -moz-linear-gradient(top,  #f88e11,  #f06015);
+            filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#f88e11', endColorstr='#f06015');
+        }
+        .orange:active {
+            color: #fcd3a5;
+            background: -webkit-gradient(linear, left top, left bottom, from(#f47a20), to(#faa51a));
+            background: -moz-linear-gradient(top,  #f47a20,  #faa51a);
+            filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#f47a20', endColorstr='#faa51a');
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas" width="800" height="320">
+    Canvas not supported
+</canvas>
+<script type="text/javascript">
+
+    var createCanvas = function(){
+        var canvas = document.getElementById('canvas'),
+            context = canvas.getContext('2d');
+        context.lineWidth = 1;
+        context.strokeRect(20,20,600,300);
+        context.beginPath();
+        context.moveTo(20,420);
+        context.lineTo(620,420);
+        context.stroke();
+        context.lineWidth = 0.5;
+        context.line = "Gray";
+        context.strokeRect(25,25,100,290);
+        context.strokeRect(225,25,100,290);
+        context.strokeRect(425,25,100,290);
+        var one = context.strokeRect(25,25,100,58);
+        function drawLine(context,color,beginx,overx) {
+            context.strokeStyle = color;
+            context.lineWidth = 0.5;
+            for (var i = 0; i < 5; i++) {
+                context.beginPath();
+                var j = 25 + i*58;
+                context.moveTo(beginx, j);
+                context.lineTo(overx, j);
+                context.stroke();
+            }
+        }
+        drawLine(context,'Gray',25,125);
+        drawLine(context,'Gray',225,325);
+        drawLine(context,'Gray',425,525);
+    }
+
+    createCanvas();
+
+    var drawBlock =function(i){
+        var canvas = document.getElementById('canvas'),
+            context = canvas.getContext('2d');
+        context.fillStyle ='red';
+        switch(i){
+            case "01":
+                context.fillRect(25,25,100,55);
+                break;
+            case "02":
+                context.fillRect(25,83,100,55);
+                break;
+            case "03":
+                context.fillRect(25,141,100,55);
+                break;
+            case "04":
+                context.fillRect(25,199,100,55);
+                break;
+            case "05":
+                context.fillRect(25,257,100,55);
+                break;
+            case "06":
+                context.fillRect(225,25,100,55);
+                break;
+            case "07":
+                context.fillRect(225,83,100,55);
+                break;
+            case "08":
+                context.fillRect(225,141,100,55);
+                break;
+            case "09":
+                context.fillRect(225,199,100,55);
+                break;
+            case "10":
+                context.fillRect(225,257,100,55);
+                break;
+            case "11":
+                context.fillRect(425,25,100,55);
+                break;
+            case "12":
+                context.fillRect(425,83,100,55);
+                break;
+            case "13":
+                context.fillRect(425,141,100,55);
+                break;
+            case "14":
+                context.fillRect(425,199,100,55);
+                break;
+            case "15":
+                context.fillRect(425,257,100,55);
+                break;
+            default:
+                console.log('数据为其他');
+        }
+    }
+
+    var socket = io.connect();
+    socket.on('data',function(data){
+        console.log(data.length);
+        drawBlock(data.substr(0,2));
+        drawBlock(data.substr(2,2));
+        drawBlock(data.substr(4,2));
+        drawBlock(data.substr(6,2));
+        drawBlock(data.substr(8,2));
+        drawBlock(data.substr(10,2));
+        drawBlock(data.substr(12,2));
+        drawBlock(data.substr(14,2));
+        drawBlock(data.substr(16,2));
+        drawBlock(data.substr(18,2));
+        drawBlock(data.substr(20,2));
+        drawBlock(data.substr(22,2));
+        drawBlock(data.substr(24,2));
+        drawBlock(data.substr(26,2));
+        drawBlock(data.substr(28,2));
+    });
+
+
+    function myrefresh()
+    {
+        window.location.reload();
+    }
+
+</script>
+<div>
+    <input class="button orange" type="button" value="获取最新车位" onclick="myrefresh()" />
+</div>
+</body>
+</html>

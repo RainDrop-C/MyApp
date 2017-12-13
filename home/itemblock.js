@@ -1,26 +1,31 @@
+import React, {
+    Component
+} from 'react';
+import {
+    View,
+    Text,
+    ScrollView,
+    StyleSheet,
+    TouchableHighlight,
+    PixelRatio,
+    WebView,
+    Navigator
+} from 'react-native';
 
-var React = require('react-native');
-var Address = require('./address');
-var Service = require('./../service');
-var Util = require('../util');
-
-var {
-  View,
-  Text,
-  StyleSheet,
-  TouchableHighlight,
-} = React;
-
-//每个单项组件
-var ItemBlock = React.createClass({
-  render: function(){
+import Util from '../util';
+class ItemBlock extends Component{
+    constructor(props){
+        super(props);
+        this.state = {id:2};
+    }
+  render(){
     var size ={
       width: parseInt(this.props.width),
       height: parseInt(this.props.width),
       backgroundColor: this.props.color,
     };
     return (
-      <TouchableHighlight underlayColor="#fff" onPress={this._loadPage}>
+      <TouchableHighlight underlayColor="#fff" onPress={this._loadPage.bind(this)}>
         <View style={[styles.itemBlock, size]}>
           <View>
             <Text style={styles.font18}>{this.props.title}</Text>
@@ -31,29 +36,37 @@ var ItemBlock = React.createClass({
         </View>
       </TouchableHighlight>
     );
-  },
+  };
   //加载页面
-  _loadPage: function(e){
-    var nav = this.props.nav;
-    var key = Util.key;
-    var partment = this.props.partment;
-    var path = Service.host + Service.getUser;
-
-    Util.post(path, {
-      key: key,
-      partment : partment
-    }, function(data){
-      nav.push({
-        title: this.props.tag,
-        component: Address,
-        passProps:{
-          data: data
+    _loadPage(){
+       const {nav} = this.props;
+        if (nav) {
+            nav.push({
+                name: 'ParkingMap',
+                component:PWebView,
+                params: {
+                    id: this.state.id
+                }
+            })
         }
-      });
-    }.bind(this));
-
-  }
-});
+}
+};
+/*url=require('../parkingLot/text.html')*/
+class PWebView extends Component{
+    render(){
+        return(
+            <View style={{flex:1}}>
+              <WebView
+                  automaticallyAdjustContentInsets={false}
+                  bounces={false}
+                  source={{url:'http://192.168.1.102:6868/index.html'}}
+                 // source={{url:'http://192.168.1.205:6868/index.html'}}
+                  style={{marginTop:20}}>
+              </WebView>
+            </View>
+        );
+    }
+};
 
 var styles = StyleSheet.create({
   itemBlock:{
